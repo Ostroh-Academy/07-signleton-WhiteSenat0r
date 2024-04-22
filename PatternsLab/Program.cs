@@ -1,60 +1,75 @@
-﻿namespace PatternsLab
+﻿namespace PatternsLab;
+
+public class VideoConferenceManager
 {
-    // The Singleton class defines the `GetInstance` method that serves as an
-    // alternative to constructor and lets clients access the same instance of
-    // this class over and over.
+    private static VideoConferenceManager instance;
+    
+    // Приклад змінних для управління підключенням та передачею даних
+    private bool isConnected;
+    private bool isDataTransmitting;
+    
+    // Приватний конструктор, щоб унеможливити створення екземплярів класу ззовні
+    private VideoConferenceManager() { }
 
-    // EN : The Singleton should always be a 'sealed' class to prevent class
-    // inheritance through external classes and also through nested classes.
-    public sealed class Singleton
+    // Метод для отримання єдиного екземпляру класу
+    public static VideoConferenceManager GetInstance()
     {
-        // The Singleton's constructor should always be private to prevent
-        // direct construction calls with the `new` operator.
-        private Singleton() { }
+        if (instance != null) return instance;
+        instance = new VideoConferenceManager();
+        return instance;
+    }
 
-        // The Singleton's instance is stored in a static field. There there are
-        // multiple ways to initialize this field, all of them have various pros
-        // and cons. In this example we'll show the simplest of these ways,
-        // which, however, doesn't work really well in multithreaded program.
-        private static Singleton _instance;
+    // Приклад методів для керування відеоконференцією
+    public void Connect()
+    {
+        isConnected = true;
+        Console.WriteLine("Connected to the video conference.");
+    }
 
-        // This is the static method that controls the access to the singleton
-        // instance. On the first run, it creates a singleton object and places
-        // it into the static field. On subsequent runs, it returns the client
-        // existing object stored in the static field.
-        public static Singleton GetInstance()
+    public void Disconnect()
+    {
+        isConnected = false;
+        Console.WriteLine("Disconnected from the video conference.");
+    }
+
+    public void StartDataTransmission()
+    {
+        if (isConnected)
         {
-            if (_instance == null)
-            {
-                _instance = new Singleton();
-            }
-            return _instance;
+            isDataTransmitting = true;
+            Console.WriteLine("Data transmission started.");
         }
-
-        // Finally, any singleton should define some business logic, which can
-        // be executed on its instance.
-        public void someBusinessLogic()
+        else
         {
-            // ...
+            Console.WriteLine("Cannot start data transmission. Not connected to the conference.");
         }
     }
 
-    class Program
+    public void StopDataTransmission()
     {
-        static void Main(string[] args)
-        {
-            // The client code.
-            Singleton s1 = Singleton.GetInstance();
-            Singleton s2 = Singleton.GetInstance();
+        isDataTransmitting = false;
+        Console.WriteLine("Data transmission stopped.");
+    }
+}
 
-            if (s1 == s2)
-            {
-                Console.WriteLine("Singleton works, both variables contain the same instance.");
-            }
-            else
-            {
-                Console.WriteLine("Singleton failed, variables contain different instances.");
-            }
+class Program
+{
+    static void Main(string[] args)
+    {
+        // Отримання єдиного екземпляру класу VideoConferenceManager
+        VideoConferenceManager manager1 = VideoConferenceManager.GetInstance();
+        VideoConferenceManager manager2 = VideoConferenceManager.GetInstance();
+
+        // Перевірка, що обидва manager1 та manager2 вказують на один і той же об'єкт
+        if (manager1 == manager2)
+        {
+            Console.WriteLine("manager1 та manager2 вказують на один і той же об'єкт.");
         }
+
+        // Приклад використання методів керування відеоконференцією
+        manager1.Connect();
+        manager1.StartDataTransmission();
+        manager2.StopDataTransmission();
+        manager1.Disconnect();
     }
 }
